@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>necros88</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>The cannibal cafe 0.2</h1>
+        <nav id="board-nav">
+            <!-- Разделы будут загружены через JS -->
+        </nav>
+    </header>
+
+    <main>
+	<div id="threads-list" class="hidden">
+    		<button id="back-to-boards">← Назад к разделам</button>
+    		<h2 id="board-title"></h2>
+    		<button id="create-thread-btn">Создать тред</button>
+    		<div id="threads-container"></div>
+	</div>
+
+        <div id="board-list">
+            <h2>Статистика разделов</h2>
+            <div id="boards-stats-container">
+                <table id="boards-stats-table">
+                    <thead>
+                        <tr>
+                            <th>Раздел</th>
+                            <th>Название</th>
+                            <th>Количество тредов</th>
+                        </tr>
+                    </thead>
+                    <tbody id="boards-stats-body">
+                        <!-- Статистика будет загружена через JS -->
+                    </tbody>
+                </table>
+            </div>
+            <h2 style="margin-top: 2rem;">Выберите раздел</h2>
+            <div id="boards-container"></div>
+        </div>
+
+        <div id="thread-view" class="hidden">
+            <button id="back-to-threads">← Назад к тредам</button>
+            <div id="thread-container"></div>
+            <div id="reply-form-container">
+                <h3>Ответить в тред</h3>
+                <form id="reply-form" enctype="multipart/form-data">
+                    <textarea name="comment" placeholder="Текст ответа" required></textarea>
+                    <div class="media-upload">
+                        <label>Медиафайлы (до 4):</label>
+                        <input type="file" name="media" multiple accept="image/*,video/*,image/gif">
+                        <div class="media-preview"></div>
+                    </div>
+                    <button type="submit">Отправить</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно создания треда -->
+    <div id="create-thread-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Создать тред</h2>
+            <form id="create-thread-form" enctype="multipart/form-data">
+                <input type="text" name="subject" placeholder="Тема треда">
+                <textarea name="comment" placeholder="Текст сообщения" required></textarea>
+                <div class="media-upload">
+                    <label>Медиафайлы (до 4):</label>
+                    <input type="file" name="media" multiple accept="image/*,video/*,image/gif">
+                    <div class="media-preview"></div>
+                </div>
+                <button type="submit">Создать тред</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно просмотра медиа -->
+    <div id="media-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <!-- Контент будет добавляться динамически -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

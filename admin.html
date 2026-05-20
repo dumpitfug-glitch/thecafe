@@ -1,0 +1,367 @@
+<!-- admin.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админка - necros88</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #2d2d2d;
+            padding: 1rem;
+            border-bottom: 2px solid #444;
+        }
+
+        h1 {
+            color: #ff4444;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .nav-btn {
+            background-color: #444;
+            color: #e0e0e0;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background-color: #ff4444;
+        }
+
+        main {
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: #2d2d2d;
+            padding: 1rem;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 4px solid #ff4444;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff4444;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        .threads-table {
+            width: 100%;
+            background-color: #2d2d2d;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .threads-table th {
+            background-color: #444;
+            padding: 1rem;
+            text-align: left;
+            color: #ff4444;
+        }
+
+        .threads-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .thread-row:hover {
+            background-color: #3d3d3d;
+        }
+
+        .board-badge {
+            background-color: #666;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .action-btn {
+            background-color: #444;
+            color: #e0e0e0;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            margin: 0.2rem;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+        }
+
+        .action-btn.delete {
+            background-color: #ff4444;
+        }
+
+        .action-btn.delete:hover {
+            background-color: #cc0000;
+        }
+
+        .action-btn.view {
+            background-color: #4444ff;
+        }
+
+        .action-btn.view:hover {
+            background-color: #0000cc;
+        }
+
+        .action-btn.clean {
+            background-color: #ffaa00;
+        }
+
+        .action-btn.clean:hover {
+            background-color: #cc8800;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background-color: #2d2d2d;
+            border: 2px solid #ff4444;
+            padding: 2rem;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #e0e0e0;
+        }
+
+        .post {
+            background-color: #3d3d3d;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 4px;
+            border-left: 3px solid #666;
+        }
+
+        .post.op {
+            border-left-color: #ff4444;
+        }
+
+        .post-header {
+            color: #ff4444;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .post-comment {
+            margin-bottom: 0.5rem;
+            white-space: pre-line;
+        }
+
+        .media-thumbnails {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .media-thumb {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border: 1px solid #666;
+            border-radius: 3px;
+        }
+
+        .search-box {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.5rem;
+            background-color: #3d3d3d;
+            border: 1px solid #666;
+            color: #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .search-box button {
+            background-color: #4444ff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .confirmation-dialog {
+            text-align: center;
+        }
+
+        .confirmation-dialog h3 {
+            margin-bottom: 1rem;
+            color: #ff4444;
+        }
+
+        .confirmation-dialog p {
+            margin-bottom: 1rem;
+            color: #aaa;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .dialog-buttons button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .dialog-buttons .confirm {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        .dialog-buttons .cancel {
+            background-color: #666;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Админка necros88</h1>
+        <nav class="admin-nav">
+            <button class="nav-btn active" onclick="showSection('stats')">Статистика</button>
+            <button class="nav-btn" onclick="showSection('threads')">Управление тредами</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Секция статистики -->
+        <section id="stats-section">
+            <h2>Общая статистика</h2>
+            <div class="stats-grid" id="stats-container">
+                <!-- Статистика будет загружена через JS -->
+            </div>
+        </section>
+
+        <!-- Секция управления тредами -->
+        <section id="threads-section" class="hidden">
+            <h2>Управление тредами</h2>
+            
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Поиск по ID треда, разделу или тексту...">
+                <button onclick="searchThreads()">Поиск</button>
+                <button onclick="loadAllThreads()">Показать все</button>
+            </div>
+            
+            <div class="threads-table-container">
+                <table class="threads-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Раздел</th>
+                            <th>Тема</th>
+                            <th>Посты</th>
+                            <th>Файлы</th>
+                            <th>Дата создания</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="threads-table-body">
+                        <!-- Треды будут загружены через JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Модальное окно просмотра треда -->
+    <div id="thread-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('thread-modal')">&times;</span>
+            <div id="thread-modal-content">
+                <!-- Контент треда будет загружен через JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="confirmation-dialog">
+                <h3 id="confirm-title">Подтверждение удаления</h3>
+                <p id="confirm-message">Вы уверены, что хотите удалить этот тред?</p>
+                <div class="dialog-buttons">
+                    <button class="confirm" id="confirm-button">Удалить</button>
+                    <button class="cancel" onclick="closeModal('confirm-modal')">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
