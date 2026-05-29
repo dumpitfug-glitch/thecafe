@@ -74,8 +74,10 @@ def index():
     return send_from_directory('.', 'index.html')
 
 @app.route('/<path:filename>')
-def static_files(filename):
-    return send_from_directory('.', filename)
+def serve_spa(filename):
+    if filename in ['style.css', 'script.js']:
+        return send_from_directory('.', filename)
+    return send_from_directory('.', 'index.html')
 
 @app.route('/api/boards', methods=['GET'])
 def get_boards():
