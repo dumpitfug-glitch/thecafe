@@ -18,10 +18,38 @@ function generatePostNumber(postId) {
     return postId.slice(-4);
 }
 
+// Обработка кнопок "Вперед" / "Назад" в браузере
+window.addEventListener('popstate', (event) => {
+    if (window.location.hash) {
+        return;
+    }
+    if (!hasUnsavedChanges || confirm('У вас есть несохраненные изменения. Продолжить?')) {
+        handleUrlRouting();
+    }
+});
+
+// Парсинг URL и переключение экрана
+function handleUrlRouting() {
+    const path = window.location.pathname;
+    const parts = path.split('/').filter(Boolean);
+
+    if (parts.length === 0 || path === '/index.html') {
+        showBoardList(false);
+    } else if (parts.length === 1) {
+        if (parts[0] !== 'style.css' && parts[0] !== 'script.js') {
+            loadThreads(parts[0], false);
+        }
+    } else if (parts.length >= 2) {
+        currentBoard = parts[0];
+        loadThread(parts[1], false);
+    }
+}
+
 // Загрузка разделов при запуске
-document.addEventListener('DOMContentLoaded', () => {
-    loadBoards();
-    loadBoardsStats();
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadBoards();
+    await loadBoardsStats();
+    handleUrlRouting();
     
     // Навигация
     document.getElementById('back-to-boards').addEventListener('click', () => {
@@ -296,7 +324,7 @@ async function loadBoards() {
 }
 
 // Загрузка тредов раздела
-async function loadThreads(boardId) {
+async function loadThreads(boardId, pushState = true) {
     try {
         const response = await fetch(`/api/threads/${boardId}`);
         if (!response.ok) {
@@ -305,6 +333,10 @@ async function loadThreads(boardId) {
         const threads = await response.json();
         
         currentBoard = boardId;
+        
+        if (pushState && window.location.pathname !== `/${boardId}`) {
+            window.history.pushState(null, '', `/${boardId}`);
+        }
         
         document.getElementById('board-title').textContent = `/${boardId}/ - ${getBoardName(boardId)}`;
         document.getElementById('board-list').classList.add('hidden');
@@ -347,7 +379,7 @@ async function loadThreads(boardId) {
 }
 
 // Загрузка конкретного треда
-async function loadThread(threadId) {
+async function loadThread(threadId, pushState = true) {
     try {
         const response = await fetch(`/api/thread/${threadId}`);
         if (!response.ok) {
@@ -356,6 +388,10 @@ async function loadThread(threadId) {
         const thread = await response.json();
         
         currentThread = threadId;
+        
+        if (pushState && window.location.pathname !== `/${currentBoard}/${threadId}`) {
+            window.history.pushState(null, '', `/${currentBoard}/${threadId}`);
+        }
         
         document.getElementById('threads-list').classList.add('hidden');
         document.getElementById('thread-view').classList.remove('hidden');
@@ -685,11 +721,15 @@ function getBoardName(boardId) {
 }
 
 // Навигация
-function showBoardList() {
+function showBoardList(pushState = true) {
     document.getElementById('threads-list').classList.add('hidden');
     document.getElementById('thread-view').classList.add('hidden');
     document.getElementById('board-list').classList.remove('hidden');
     resetUnsavedChanges();
+    
+    if (pushState && window.location.pathname !== '/') {
+        window.history.pushState(null, '', '/');
+    }
 }
 
 function showThreadsList() {
